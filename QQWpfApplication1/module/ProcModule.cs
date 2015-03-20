@@ -144,18 +144,18 @@ namespace QQWpfApplication1.module
 	 * @param listener a {@link iqq.im.QQActionListener.OnActionEvent} object.
 	 * @return a {@link iqq.im.evt.AbstractActionFuture} object.
 	 */
-	public AbstractActionFuture relogin(QQStatus status,  QQActionListener.OnActionEvent listener){
+	public void  relogin(QQStatus status,  QQActionListener.OnActionEvent listener){
 		getContext().getAccount().setStatus(status);
 		getContext().getSession().setState(QQSession.State.LOGINING);
-        LoginModule login = (LoginModule)getContext().getModule(AbstractModule.Type.LOGIN);
-		AbstractActionFuture future = login.channelLogin(status, delegate(QQActionEvent evt) {
+        LoginModule loginModule = (LoginModule)getContext().getModule(AbstractModule.Type.LOGIN);
+        loginModule.channelLogin(status, delegate(QQActionEvent evt)
+        {
 				if(evt.getType() == QQActionEvent.Type.EVT_ERROR) {
 					login(listener);
 				} else {
 					listener(evt);
 				}
 		});
-		return future;
 	}
 	
 	/**
@@ -223,9 +223,9 @@ namespace QQWpfApplication1.module
 	 * @param listener a {@link iqq.im.QQActionListener.OnActionEvent} object.
 	 * @return a {@link iqq.im.evt.AbstractActionFuture} object.
 	 */
-	public AbstractActionFuture doLogout(QQActionListener.OnActionEvent listener) {
-		LoginModule login = (LoginModule) getContext().getModule(AbstractModule.Type.LOGIN);
-		return login.logout(listener);
+	public void doLogout(QQActionListener.OnActionEvent listener) {
+		LoginModule loginModule = (LoginModule) getContext().getModule(AbstractModule.Type.LOGIN);
+        loginModule.logout(listener);
 	}
 
     }

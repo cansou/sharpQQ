@@ -183,7 +183,7 @@ internal QQSession Session
 	 *
 	 * 重新登录
 	 */
-	public AbstractActionFuture relogin(QQStatus status, QQActionListener.OnActionEvent  listener) {
+	public void relogin(QQStatus status, QQActionListener.OnActionEvent  listener) {
 		if (session.getState() == QQWpfApplication1.evt.QQSession.State.ONLINE) {
 			throw new ApplicationException("client is aready online !!!");
 		}
@@ -191,7 +191,7 @@ internal QQSession Session
 		getAccount().setStatus(status);
 		getSession().setState(QQSession.State.LOGINING);
 		ProcModule procModule = (ProcModule) getModule(AbstractModule.Type.PROC);
-		return procModule.relogin(status, listener);
+		procModule.relogin(status, listener);
 	}
 
 	/**
@@ -228,7 +228,8 @@ internal QQSession Session
 			}
 		}
 		// 重新登录成功，重新poll
-		if(evt.getType() == Type.RELOGIN_SUCCESS) {
+        if (evt.getType() == QQNotifyEvent.Type.RELOGIN_SUCCESS)
+        {
 			beginPollMsg();
 		}
 	}
@@ -635,7 +636,7 @@ internal QQSession Session
 	 * 退出验证码输入
 	 */
 	
-	public void cancelVerify(QQNotifyEvent verifyEvent) throws QQException {
+	public void cancelVerify(QQNotifyEvent verifyEvent) {
 		QQNotifyEventArgs.ImageVerify verify = 
 			(QQNotifyEventArgs.ImageVerify) verifyEvent.getTarget();
 		verify.future.cancel();
