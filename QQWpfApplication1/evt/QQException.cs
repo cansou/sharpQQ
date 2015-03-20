@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace QQWpfApplication1.evt
 {
-    class QQException:ApplicationException
+    public class QQException:ApplicationException
     {
 
         

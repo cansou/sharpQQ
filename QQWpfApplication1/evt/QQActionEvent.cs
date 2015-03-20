@@ -12,6 +12,7 @@ namespace QQWpfApplication1.evt
 	private Type type;
 	private Object target;
 	private AbstractActionFuture future;
+    private AbstractActionFuture abstractActionFuture;
 	
 	/**
 	 * <p>Constructor for QQActionEvent.</p>
@@ -20,12 +21,19 @@ namespace QQWpfApplication1.evt
 	 * @param target a {@link java.lang.Object} object.
 	 * @param future a {@link iqq.im.event.QQActionFuture} object.
 	 */
-    public QQActionEvent(Type type, Object target, AbstractActionFuture future)
+    public QQActionEvent(Type type, Object target)
     {
 		this.type = type;
 		this.target = target;
-		this.future = future;
 	}
+
+    public QQActionEvent(Type type, object target, AbstractActionFuture abstractActionFuture)
+    {
+        // TODO: Complete member initialization
+        this.type = type;
+        this.target = target;
+        this.abstractActionFuture = abstractActionFuture;
+    }
 	
 	
 	/**
@@ -46,7 +54,7 @@ namespace QQWpfApplication1.evt
 	}
 
 
-	public static enum Type{
+	public enum Type{
 		EVT_OK,
 		EVT_ERROR,
 		EVT_WRITE,

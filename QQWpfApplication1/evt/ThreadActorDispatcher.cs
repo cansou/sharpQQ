@@ -83,7 +83,6 @@ namespace QQWpfApplication1.evt
 		public void execute() {
 			//do nothing
 					service.destroy();
-			}
 		}
 	}
 	

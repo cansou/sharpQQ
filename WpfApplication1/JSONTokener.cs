@@ -7,11 +7,8 @@ using System.IO ;
 
 namespace QQWpfApplication1.json
 {
-    class JSONTokener
+    public class JSONTokener
     {
-
-        
-
     private long    character;
     private Boolean eof;
     private long    index;

@@ -12,47 +12,30 @@ namespace QQWpfApplication1.evt
         
 	private Type type;
 	private QQContext context;
-	private HttpAction action;
+	private AbstractHttpAction action;
 	private QQHttpResponse response;
-	private Throwable throwable;
+	private Exception throwable;
 	private long current;
 	private long total;
 	
 	/** {@inheritDoc} */
-	@Override
+	
 	public void execute() {
 		try {
 			switch (type) {
-			case BUILD_REQUEST: {
-				HttpService service = (HttpService) context.getSerivce(QQService.Type.HTTP);
+			case Type.BUILD_REQUEST: 
+				ApacheHttpService service = context.getSerivce();
 				QQHttpRequest request = action.buildRequest();
-				Future<QQHttpResponse> future = service.executeHttpRequest(request, new HttpAdaptor(context, action));
-				action.setResponseFuture(future);
-				}
+                service.executeHttpRequest(request, new HttpAdaptor(context, action));
 				break;
 
-			case CANCEL_REQUEST:
-				action.cancelRequest();
-				break;
-				
-			case ON_HTTP_ERROR:
+
+            case Type.ON_HTTP_ERROR:
 				action.onHttpError(throwable);
 				break;
-				
-			case ON_HTTP_FINISH:
+
+            case Type.ON_HTTP_FINISH:
 				action.onHttpFinish(response);
-				break;
-				
-			case ON_HTTP_HEADER:
-				action.onHttpHeader(response);
-				break;
-				
-			case ON_HTTP_READ:
-				action.onHttpRead(current, total);
-				break;
-				
-			case ON_HTTP_WRITE:
-				action.onHttpWrite(current, total);
 				break;
 
 			}
@@ -62,7 +45,7 @@ namespace QQWpfApplication1.evt
 	}
 	
 	
-	public static enum Type{
+	public enum Type{
 		BUILD_REQUEST,
 		CANCEL_REQUEST,
 		ON_HTTP_ERROR,
@@ -78,9 +61,9 @@ namespace QQWpfApplication1.evt
 	 *
 	 * @param type a {@link iqq.im.actor.HttpActor.Type} object.
 	 * @param context a {@link iqq.im.core.QQContext} object.
-	 * @param action a {@link iqq.im.action.HttpAction} object.
+	 * @param action a {@link iqq.im.action.AbstractHttpAction} object.
 	 */
-	public HttpActor(Type type, QQContext context, HttpAction action) {
+	public HttpActor(Type type, QQContext context, AbstractHttpAction action) {
 		this.type = type;
 		this.context = context;
 		this.action = action;
@@ -92,10 +75,10 @@ namespace QQWpfApplication1.evt
 	 *
 	 * @param type a {@link iqq.im.actor.HttpActor.Type} object.
 	 * @param context a {@link iqq.im.core.QQContext} object.
-	 * @param action a {@link iqq.im.action.HttpAction} object.
+	 * @param action a {@link iqq.im.action.AbstractHttpAction} object.
 	 * @param response a {@link iqq.im.http.QQHttpResponse} object.
 	 */
-	public HttpActor(Type type, QQContext context, HttpAction action, QQHttpResponse response) {
+	public HttpActor(Type type, QQContext context, AbstractHttpAction action, QQHttpResponse response) {
 		this.type = type;
 		this.context = context;
 		this.action = action;
@@ -108,10 +91,10 @@ namespace QQWpfApplication1.evt
 	 *
 	 * @param type a {@link iqq.im.actor.HttpActor.Type} object.
 	 * @param context a {@link iqq.im.core.QQContext} object.
-	 * @param action a {@link iqq.im.action.HttpAction} object.
+	 * @param action a {@link iqq.im.action.AbstractHttpAction} object.
 	 * @param throwable a {@link java.lang.Throwable} object.
 	 */
-	public HttpActor(Type type, QQContext context, HttpAction action, Throwable throwable) {
+	public HttpActor(Type type, QQContext context, AbstractHttpAction action, Exception throwable) {
 		this.type = type;
 		this.context = context;
 		this.action = action;
@@ -124,11 +107,11 @@ namespace QQWpfApplication1.evt
 	 *
 	 * @param type a {@link iqq.im.actor.HttpActor.Type} object.
 	 * @param context a {@link iqq.im.core.QQContext} object.
-	 * @param action a {@link iqq.im.action.HttpAction} object.
+	 * @param action a {@link iqq.im.action.AbstractHttpAction} object.
 	 * @param current a long.
 	 * @param total a long.
 	 */
-	public HttpActor(Type type, QQContext context, HttpAction action, long current, long total) {
+	public HttpActor(Type type, QQContext context, AbstractHttpAction action, long current, long total) {
 		this.type = type;
 		this.context = context;
 		this.action = action;
@@ -137,46 +120,53 @@ namespace QQWpfApplication1.evt
 	}
 
 
-	public static class HttpAdaptor implements QQHttpListener{
-		private QQContext context;
-		private HttpAction action;
-		
-		public HttpAdaptor(QQContext context, HttpAction action) {
-			this.context = context;
-			this.action = action;
-		}
-
-		@Override
-		public void onHttpFinish(QQHttpResponse response) {
-			context.pushActor(new HttpActor(Type.ON_HTTP_FINISH, context, action, response));
-		}
-
-		@Override
-		public void onHttpError(Throwable t) {
-			context.pushActor(new HttpActor(Type.ON_HTTP_ERROR, context, action, t));
-			
-		}
-
-		@Override
-		public void onHttpHeader(QQHttpResponse response) {
-			context.pushActor(new HttpActor(Type.ON_HTTP_HEADER, context, action, response));
-			
-		}
-
-		@Override
-		public void onHttpWrite(long current, long total) {
-			context.pushActor(new HttpActor(Type.ON_HTTP_WRITE, context, action, current, total));
-		}
-
-		@Override
-		public void onHttpRead(long current, long total) {
-			context.pushActor(new HttpActor(Type.ON_HTTP_READ, context, action, current, total));
-		}
-	}
 
 
+    public class HttpAdaptor:QQHttpListener
+    {
+        private QQContext context;
+        private AbstractHttpAction action;
+
+        public HttpAdaptor(QQContext context, AbstractHttpAction action)
+        {
+            this.context = context;
+            this.action = action;
+        }
+
+
+        public void onHttpFinish(QQHttpResponse response)
+        {
+            context.pushActor(new HttpActor(Type.ON_HTTP_FINISH, context, action, response));
+        }
+
+
+        public void onHttpError(Exception t)
+        {
+            context.pushActor(new HttpActor(Type.ON_HTTP_ERROR, context, action, t));
+
+        }
+
+
+        public void onHttpHeader(QQHttpResponse response)
+        {
+            context.pushActor(new HttpActor(Type.ON_HTTP_HEADER, context, action, response));
+
+        }
+
+
+        public void onHttpWrite(long current, long total)
+        {
+            context.pushActor(new HttpActor(Type.ON_HTTP_WRITE, context, action, current, total));
+        }
+
+
+        public void onHttpRead(long current, long total)
+        {
+            context.pushActor(new HttpActor(Type.ON_HTTP_READ, context, action, current, total));
+        }
+    }
 	/** {@inheritDoc} */
-	@Override
+	
 	public String toString() {
 		return "HttpActor [type=" + type + ", action=" + action + "]";
 	}

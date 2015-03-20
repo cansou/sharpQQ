@@ -1,4 +1,5 @@
-﻿using System;
+﻿using QQWpfApplication1.module;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,15 +13,15 @@ namespace QQWpfApplication1.evt
 	/**
 	 * <p>pushActor.</p>
 	 *
-	 * @param actor a {@link iqq.im.actor.QQActor} object.
+	 * @param actor a {@link iqq.im.actor.HttpActor} object.
 	 */
-	public void pushActor(QQActor actor);
+	public void pushActor(HttpActor actor);
 	/**
 	 * <p>fireNotify.</p>
 	 *
 	 * @param event a {@link iqq.im.event.QQNotifyEvent} object.
 	 */
-	public void fireNotify(QQNotifyEvent event);
+	public void fireNotify(QQNotifyEvent evt);
 	/**
 	 * <p>getModule.</p>
 	 *
@@ -28,7 +29,7 @@ namespace QQWpfApplication1.evt
 	 * @param <T> a T object.
 	 * @return a T object.
 	 */
-	public <T extends QQModule> T getModule(QQModule.Type type);
+    public AbstractModule getModule(AbstractModule.Type type);
 	/**
 	 * <p>getSerivce.</p>
 	 *
@@ -36,13 +37,13 @@ namespace QQWpfApplication1.evt
 	 * @param <T> a T object.
 	 * @return a T object.
 	 */
-	public <T extends QQService> T getSerivce(QQService.Type type);
+	public ApacheHttpService getSerivce();
 	/**
 	 * <p>getAccount.</p>
 	 *
 	 * @return a {@link iqq.im.bean.QQAccount} object.
 	 */
-	public QQAccount getAccount();
+	public QQUser getAccount();
 	/**
 	 * <p>getSession.</p>
 	 *

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace QQWpfApplication1.json
 {
-    class JSONException :ApplicationException
+    public class JSONException :ApplicationException
     {
     private Exception cause;
 

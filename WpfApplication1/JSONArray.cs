@@ -9,7 +9,7 @@ using System.IO;
 
 namespace QQWpfApplication1.json
 {
-    class JSONArray
+    public class JSONArray
     {
         
 
@@ -779,6 +779,58 @@ namespace QQWpfApplication1.json
      * @return The Writer.
      * @
      */
+    public TextWriter Write(TextWriter writer)
+    {
+             return this.Write(writer, 0, 0);
+    }
 
+    /**
+     * Write the contents of the JSONArray as JSON text to a writer. For
+     * compactness, no whitespace is added.
+     * <p>
+     * Warning: This method assumes that the data structure is acyclical.
+     *
+     * @param indentFactor
+     *            The number of spaces to add to each level of indentation.
+     * @param indent
+     *            The indention of the top level.
+     * @return The writer.
+     * @throws JSONException
+     */
+    public TextWriter Write(TextWriter Writer, int indentFactor, int indent) {
+        try {
+            Boolean commanate = false;
+            int length = this.length();
+            Writer.Write('[');
+
+            if (length == 1) {
+                JSONObject.WriteValue(Writer, this.myArrayList[0],
+                        indentFactor, indent);
+            } else if (length != 0) {
+                int newindent = indent + indentFactor;
+
+                for (int i = 0; i < length; i += 1) {
+                    if (commanate) {
+                        Writer.Write(',');
+                    }
+                    if (indentFactor > 0) {
+                        Writer.Write('\n');
+                    }
+                    JSONObject.indent(Writer, newindent);
+                    JSONObject.WriteValue(Writer, this.myArrayList[i],
+                            indentFactor, newindent);
+                    commanate = true;
+                }
+                if (indentFactor > 0) {
+                    Writer.Write('\n');
+                }
+                JSONObject.indent(Writer, indent);
+            }
+            Writer.Write(']');
+            return Writer;
+        } catch (IOException e) {
+            throw new JSONException(e);
+        }
+    }
     }
 }

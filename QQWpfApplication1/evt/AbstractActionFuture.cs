@@ -8,23 +8,32 @@ using System.Threading.Tasks;
 
 namespace QQWpfApplication1.evt
 {
-    abstract class AbstractActionFuture:QQActionListener
+    class AbstractActionFuture
     {
         
-	private QQActionListener proxyListener;
+	private QQActionListener.OnActionEvent proxyListener;
 	private SizeQueue<QQActionEvent> evtQueue;
     private volatile Boolean hasEvent;
+    private QQActionListener.OnActionEvent listener;
+    private bool p;
 
 	/**
 	 * <p>Constructor for AbstractActionFuture.</p>
 	 *
-	 * @param proxyListener a {@link iqq.im.QQActionListener} object.
+	 * @param proxyListener a {@link iqq.im.QQActionListener.OnActionEvent} object.
 	 */
-	public AbstractActionFuture(QQActionListener proxyListener) {
+	public AbstractActionFuture(QQActionListener.OnActionEvent proxyListener) {
         this.hasEvent = true;
 		this.proxyListener = proxyListener;
 		this.evtQueue = new SizeQueue<QQActionEvent>(int.MaxValue);
 	}
+
+    public AbstractActionFuture(QQActionListener.OnActionEvent listener, bool p)
+    {
+        // TODO: Complete member initialization
+        this.listener = listener;
+        this.p = p;
+    }
 
 	/** {@inheritDoc} */
 	public QQActionEvent waitEvent()  {
@@ -63,7 +72,7 @@ namespace QQWpfApplication1.evt
 	/** {@inheritDoc} */
 	public void onActionEvent(QQActionEvent evt) {
 		if (proxyListener != null){
-			proxyListener.onActionEvent(evt);
+			proxyListener(evt);
 		}
 		evtQueue.Enqueue(evt);
 	}
@@ -84,7 +93,7 @@ namespace QQWpfApplication1.evt
 	 *
 	 * @return the proxyListener
 	 */
-	public QQActionListener getProxyListener() {
+	public QQActionListener.OnActionEvent getProxyListener() {
 		return proxyListener;
 	}
 

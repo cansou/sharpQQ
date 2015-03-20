@@ -7,7 +7,7 @@ using System.Text;
 using System.IO;
 namespace QQWpfApplication1.json
 {
-    class JSONObject
+    public class JSONObject
     {
         
     /**
@@ -94,7 +94,7 @@ namespace QQWpfApplication1.json
      *             If there is a syntax error in the source string or a
      *             duplicated key.
      */
-    public JSONObject(JSONTokener x)  :this(){
+    public JSONObject(JSONTokener x) :this(){
         char c;
         String key;
 
@@ -1250,14 +1250,110 @@ namespace QQWpfApplication1.json
      * @
      */
 
-
-    static void indent(TextWriter Writer, int indent)
+     public   String ToString()
     {
-        for (int i = 0; i < indent; i += 1) {
-            Writer.Write(' ');
+        try
+        {
+            return this.ToString(0);
+        }
+        catch (Exception e)
+        {
+            return null;
+        }
+    }
+         public String ToString(int indentFactor) {
+        StringWriter w = new StringWriter();
+        lock (w.GetStringBuilder()) {
+            return this.Write(w, indentFactor, 0).ToString();
         }
     }
 
+        public TextWriter Write(TextWriter Writer) {
+        return this.Write(Writer, 0, 0);
+    }
+
+    public  static TextWriter WriteValue(TextWriter Writer, Object value,
+            int indentFactor, int indent) {
+
+                if (value == null || value.Equals(null))
+                {
+                    Writer.Write("null");
+                }
+                else if (value is JSONObject)
+                {
+                    ((JSONObject)value).Write(Writer, indentFactor, indent);
+                }
+                else if (value is JSONArray)
+                {
+                    ((JSONArray)value).Write(Writer, indentFactor, indent);
+                }
+                else if (value is long|| value is Double)
+                {
+                    Writer.Write(value);
+                }
+                else if (value is Boolean)
+                {
+                    Writer.Write(value.ToString());
+                }
+                else
+                {
+                    quote(value.ToString(), Writer);
+                }
+        return Writer;
+    
+    }
+    public   static void indent(TextWriter writer, int ind) {
+        for (int i = 0; i < ind; i += 1) {
+            writer.Write(' ');
+        }
+    }
+        TextWriter Write(TextWriter Writer, int indFactor, int ind)
+           {
+        try {
+            Boolean commanate = false;
+             int length = this.Length();
+            Dictionary<String,Object>.KeyCollection.Enumerator keys = this.keys();
+            Writer.Write('{');
+            
+            if (length == 1) {
+                keys.MoveNext();
+                Object key = keys.Current;
+                Writer.Write(quote(key.ToString()));
+                Writer.Write(':');
+                if (indFactor > 0) {
+                    Writer.Write(' ');
+                }
+                WriteValue(Writer, this.map[key+""], indFactor, ind);
+            } else if (length != 0) {
+                int newind = ind + indFactor;
+                while (keys.MoveNext()) {
+                    Object key = keys.Current;
+                    if (commanate) {
+                        Writer.Write(',');
+                    }
+                    if (indFactor > 0) {
+                        Writer.Write('\n');
+                    }
+                    indent(Writer, newind);
+                    Writer.Write(quote(key.ToString()));
+                    Writer.Write(':');
+                    if (indFactor > 0) {
+                        Writer.Write(' ');
+                    }
+                    WriteValue(Writer, this.map[key+""], indFactor, newind);
+                    commanate = true;
+                }
+                if (indFactor > 0) {
+                    Writer.Write('\n');
+                }
+                indent(Writer, ind);
+            }
+            Writer.Write('}');
+            return Writer;
+        } catch (IOException exception) {
+            throw new JSONException(exception);
+        }
+    }
     /**
      * Write the contents of the JSONObject as JSON text to a Writer. For
      * compactness, no whitespace is added.
