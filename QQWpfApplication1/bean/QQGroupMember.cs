@@ -5,7 +5,7 @@ using System.Text;
 
 namespace QQWpfApplication1.bean
 {
-    class QQGroupMember:QQStranger
+    public class QQGroupMember:QQStranger
     {
 	private QQGroup group;
 	private String card;

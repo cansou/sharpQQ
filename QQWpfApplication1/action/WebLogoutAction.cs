@@ -1,4 +1,5 @@
-﻿using QQWpfApplication1.evt;
+﻿using QQWpfApplication1.action;
+using QQWpfApplication1.action;
 using QQWpfApplication1.json;
 using System;
 using System.Collections.Generic;
@@ -6,7 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace QQWpfApplication1.module
+namespace QQWpfApplication1.action
 {
     class WebLogoutAction:AbstractHttpAction
     {
@@ -22,8 +23,9 @@ namespace QQWpfApplication1.module
 	}
 
 	/** {@inheritDoc} */
-	
-	protected QQHttpRequest onBuildRequest() {
+
+    public override QQHttpRequest onBuildRequest()
+    {
 		QQSession session = getContext().getSession();
 
 		QQHttpRequest req = createHttpRequest("GET", QQConstants.URL_LOGOUT);
@@ -37,8 +39,9 @@ namespace QQWpfApplication1.module
 	}
 
 	/** {@inheritDoc} */
-	
-	protected void onHttpStatusOK(QQHttpResponse response) {
+
+    public override void onHttpStatusOK(QQHttpResponse response)
+    {
 		JSONObject json = new JSONObject(new JSONTokener(new StringReader(response.getResponseString())));
 		String isOK = json.getString("result");
 		if (json.getInt("retcode") == 0) {

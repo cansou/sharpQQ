@@ -1,21 +1,21 @@
 ﻿using QQWpfApplication1.bean;
-using QQWpfApplication1.evt;
+using QQWpfApplication1.action;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media.Imaging;
 
-namespace QQWpfApplication1.module
+namespace QQWpfApplication1.action
 {
     class ProcModule:AbstractModule
     {
         
 	public AbstractActionFuture login(QQActionListener.OnActionEvent listener) {
-		AbstractActionFuture future = new AbstractActionFuture(listener, true);
+        AbstractActionFuture future = new AbstractActionFuture(listener);
 		doGetLoginSig(future);
-        getContext();
 		return future;
 	}
 	
@@ -54,7 +54,7 @@ namespace QQWpfApplication1.module
 					QQNotifyEventArgs.ImageVerify verify = new QQNotifyEventArgs.ImageVerify();
 					
 					verify.type = QQNotifyEventArgs.ImageVerify.VerifyType.LOGIN;
-					verify.image = (Bitmap) evt.getTarget();
+					verify.image = (BitmapImage) evt.getTarget();
 					verify.reason = reason;
 					verify.future = future;
 					
@@ -85,7 +85,7 @@ namespace QQWpfApplication1.module
 				}else if(evt.getType() == QQActionEvent.Type.EVT_ERROR){
 					future.notifyActionEvent(
 							QQActionEvent.Type.EVT_ERROR,
-							(QQException) evt.getTarget());
+							evt.getTarget());
 				}
 
 		});
@@ -100,7 +100,7 @@ namespace QQWpfApplication1.module
 							doCheckLoginSig( (String) evt.getTarget(),future);
 						} else if (evt.getType() == QQActionEvent.Type.EVT_ERROR) {
 							QQException ex = (QQException) (evt.getTarget());
-							if(ex.getError()==QQWpfApplication1.evt.QQException.QQErrorCode.WRONG_CAPTCHA){
+							if(ex.getError()==QQWpfApplication1.action.QQException.QQErrorCode.WRONG_CAPTCHA){
 								doGetVerify(ex.Message, future);
 							}else{
 								future.notifyActionEvent(
@@ -144,9 +144,12 @@ namespace QQWpfApplication1.module
 	 * @param listener a {@link iqq.im.QQActionListener.OnActionEvent} object.
 	 * @return a {@link iqq.im.evt.AbstractActionFuture} object.
 	 */
-	public void  relogin(QQStatus status,  QQActionListener.OnActionEvent listener){
+    public AbstractActionFuture relogin(QQStatus status, QQActionListener.OnActionEvent listener)
+    {
 		getContext().getAccount().setStatus(status);
 		getContext().getSession().setState(QQSession.State.LOGINING);
+
+        AbstractActionFuture future = new AbstractActionFuture(listener);
         LoginModule loginModule = (LoginModule)getContext().getModule(AbstractModule.Type.LOGIN);
         loginModule.channelLogin(status, delegate(QQActionEvent evt)
         {
@@ -156,6 +159,7 @@ namespace QQWpfApplication1.module
 					listener(evt);
 				}
 		});
+        return future;
 	}
 	
 	/**
@@ -202,10 +206,10 @@ namespace QQWpfApplication1.module
 					account.setStatus(QQStatus.OFFLINE);
 					//因为自带了错误重试机制，如果出现了错误回调，表明已经超时多次均失败，这里直接返回网络错误的异常
 					QQException ex = (QQException) evt.getTarget();
-					QQWpfApplication1.evt.QQException.QQErrorCode code = ex.getError();
-					if(code == QQWpfApplication1.evt.QQException.QQErrorCode.INVALID_LOGIN_AUTH) {
+					QQWpfApplication1.action.QQException.QQErrorCode code = ex.getError();
+					if(code == QQWpfApplication1.action.QQException.QQErrorCode.INVALID_LOGIN_AUTH) {
 						relogin();
-					} else if(code == QQWpfApplication1.evt.QQException.QQErrorCode.IO_ERROR || code == QQWpfApplication1.evt.QQException.QQErrorCode.IO_TIMEOUT){
+					} else if(code == QQWpfApplication1.action.QQException.QQErrorCode.IO_ERROR || code == QQWpfApplication1.action.QQException.QQErrorCode.IO_TIMEOUT){
 						//粗线了IO异常，直接报网络错误
 						getContext().fireNotify(new QQNotifyEvent(QQNotifyEvent.Type.NET_ERROR, ex));
 					}else{
@@ -223,9 +227,12 @@ namespace QQWpfApplication1.module
 	 * @param listener a {@link iqq.im.QQActionListener.OnActionEvent} object.
 	 * @return a {@link iqq.im.evt.AbstractActionFuture} object.
 	 */
-	public void doLogout(QQActionListener.OnActionEvent listener) {
+    public AbstractActionFuture doLogout(QQActionListener.OnActionEvent listener)
+    {
+        AbstractActionFuture future = new AbstractActionFuture(listener);
 		LoginModule loginModule = (LoginModule) getContext().getModule(AbstractModule.Type.LOGIN);
         loginModule.logout(listener);
+        return future;
 	}
 
     }

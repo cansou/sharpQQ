@@ -1,10 +1,10 @@
-﻿using QQWpfApplication1.evt;
+﻿using QQWpfApplication1.action;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace QQWpfApplication1.module
+namespace QQWpfApplication1.action
 {
     class CheckLoginSigAction:AbstractHttpAction
     {
@@ -13,11 +13,13 @@ namespace QQWpfApplication1.module
 		this.checkSigUrl = checkSigUrl;
 	}
 	/** {@inheritDoc} */
-	protected void onHttpStatusOK(QQHttpResponse response)  {
+    public override void onHttpStatusOK(QQHttpResponse response)
+    {
 		notifyActionEvent(QQActionEvent.Type.EVT_OK, null);
 	}
 	/** {@inheritDoc} */
-	protected QQHttpRequest onBuildRequest()  {
+    public override QQHttpRequest onBuildRequest()
+    {
 		return createHttpRequest("GET", checkSigUrl);
 	}
     }

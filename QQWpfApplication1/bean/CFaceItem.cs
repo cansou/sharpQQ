@@ -1,4 +1,4 @@
-﻿using QQWpfApplication1.evt;
+﻿using QQWpfApplication1.action;
 using QQWpfApplication1.json;
 using System;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ using System.Text;
 
 namespace QQWpfApplication1.bean
 {
-    class CFaceItem:ContentItem
+    public class CFaceItem:ContentItem
     {
 
         
@@ -135,12 +135,14 @@ namespace QQWpfApplication1.bean
 	 * @see iqq.im.bean.content.ContentItem#getType()
 	 */
 	/** {@inheritDoc} */
-	public Type getType() {
+    public override Type getType()
+    {
 		return Type.CFACE;
 	}
 
 	/** {@inheritDoc} */
-	public Object toJson()  {
+    public override Object toJson()
+    {
 		// [\"cface\",\"group\",\"5F7E31F0001EF4310865F1FF4549B12B.jPg\"]
 		JSONArray json = new JSONArray();
 		json.put("cface");
@@ -150,7 +152,8 @@ namespace QQWpfApplication1.bean
 	}
 
 	/** {@inheritDoc} */
-	public void fromJson(String text)  {
+    public override void fromJson(String text)
+    {
 		// ["cface",{"name":"{94E8E5BA-9304-043E-F028-93986EEF0450}.jpg","file_id":445318646,"key":"PN576E5TyB53muY9","server":"124.115.11.111:8000"}]
 		//["cface","4D72EF8CF64D53DECB31ABC2B601AB23.jpg",""],
 		try {
@@ -165,7 +168,7 @@ namespace QQWpfApplication1.bean
 				this.setServer(pic.getString("server"));
 			}
 		} catch (JSONException e) {
-			throw new QQException(QQWpfApplication1.evt.QQException.QQErrorCode.JSON_ERROR, e);
+			throw new QQException(QQWpfApplication1.action.QQException.QQErrorCode.JSON_ERROR, e);
 		}
 
 	}

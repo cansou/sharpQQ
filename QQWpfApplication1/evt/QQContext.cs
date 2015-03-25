@@ -1,13 +1,15 @@
-﻿using QQWpfApplication1.module;
+﻿using QQWpfApplication1.bean;
+using QQWpfApplication1.action;
+using QQWpfApplication1.action;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace QQWpfApplication1.evt
+namespace QQWpfApplication1.action
 {
-    interface QQContext
+     public interface QQContext
     {
         
 	/**
@@ -15,13 +17,13 @@ namespace QQWpfApplication1.evt
 	 *
 	 * @param actor a {@link iqq.im.actor.HttpActor} object.
 	 */
-	public void pushActor(HttpActor actor);
+	 void pushActor(HttpActor actor);
 	/**
 	 * <p>fireNotify.</p>
 	 *
 	 * @param event a {@link iqq.im.event.QQNotifyEvent} object.
 	 */
-	public void fireNotify(QQNotifyEvent evt);
+	 void fireNotify(QQNotifyEvent evt);
 	/**
 	 * <p>getModule.</p>
 	 *
@@ -29,7 +31,7 @@ namespace QQWpfApplication1.evt
 	 * @param <T> a T object.
 	 * @return a T object.
 	 */
-    public AbstractModule getModule(AbstractModule.Type type);
+     AbstractModule getModule(AbstractModule.Type type);
 	/**
 	 * <p>getSerivce.</p>
 	 *
@@ -37,25 +39,25 @@ namespace QQWpfApplication1.evt
 	 * @param <T> a T object.
 	 * @return a T object.
 	 */
-	public ApacheHttpService getSerivce();
+	 ApacheHttpService getSerivce();
 	/**
 	 * <p>getAccount.</p>
 	 *
 	 * @return a {@link iqq.im.bean.QQAccount} object.
 	 */
-	public QQUser getAccount();
+	 QQAccount getAccount();
 	/**
 	 * <p>getSession.</p>
 	 *
 	 * @return a {@link iqq.im.core.QQSession} object.
 	 */
-	public QQSession getSession();
+	 QQSession getSession();
 	/**
 	 * <p>getStore.</p>
 	 *
 	 * @return a {@link iqq.im.core.QQStore} object.
 	 */
-	public QQStore   getStore();
+	 QQStore   getStore();
 
     }
 }

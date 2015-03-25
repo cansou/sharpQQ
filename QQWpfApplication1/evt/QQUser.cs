@@ -5,10 +5,11 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media.Imaging;
 
-namespace QQWpfApplication1.evt
+namespace QQWpfApplication1.action
 {
-    class QQUser
+    public class QQUser
     {
         
 	private long uin = -2;
@@ -29,7 +30,7 @@ namespace QQWpfApplication1.evt
 	private int blood; // 血型
 	private String homepage; // 个人主页
 	private int stat; // 统计
-	private Boolean isVip; // 是否为VIP
+	private Boolean vip; // 是否为VIP
 	private int vipLevel; // VIP等级
 	private String country; // 国家
 	private String province; // 省
@@ -39,7 +40,7 @@ namespace QQWpfApplication1.evt
 	private int chineseZodiac; // 生肖
 	private int flag;
 	private int cip;
-	private  Bitmap face; // 头像,不能被序列化
+	private  BitmapImage face; // 头像,不能被序列化
 	
 
 	/**
@@ -126,7 +127,7 @@ namespace QQWpfApplication1.evt
 	 *
 	 * @return a {@link java.util.Date} object.
 	 */
-	public Date getBirthday() {
+	public DateTime getBirthday() {
 		return birthday;
 	}
 
@@ -505,7 +506,7 @@ namespace QQWpfApplication1.evt
 	 * @return a Boolean.
 	 */
 	public Boolean isVip() {
-		return isVip;
+		return vip;
 	}
 
 	/**
@@ -514,7 +515,7 @@ namespace QQWpfApplication1.evt
 	 * @param isVip a Boolean.
 	 */
 	public void setVip(Boolean isVip) {
-		this.isVip = isVip;
+		this.vip = isVip;
 	}
 
 	/**
@@ -540,7 +541,7 @@ namespace QQWpfApplication1.evt
 	 *
 	 * @return a {@link java.awt.image.Bitmap} object.
 	 */
-	public Bitmap getFace() {
+	public BitmapImage getFace() {
 		return face;
 	}
 
@@ -549,7 +550,7 @@ namespace QQWpfApplication1.evt
 	 *
 	 * @param face a {@link java.awt.image.Bitmap} object.
 	 */
-	public void setFace(Bitmap face) {
+	public void setFace(BitmapImage face) {
 		this.face = face;
 	}
 

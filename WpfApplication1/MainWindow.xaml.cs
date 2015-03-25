@@ -1,8 +1,12 @@
-﻿using QQWpfApplication1.json;
+﻿using Microsoft.JScript;
+using Microsoft.JScript.Vsa;
+using QQWpfApplication1.json;
 using System;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -52,21 +56,129 @@ namespace WpfApplication1
            JSONObject json = new JSONObject(token);
            Console.WriteLine(json.ToString());
 
-           Console.WriteLine((Type.FONT==(Type)Enum.Parse(typeof(Type), "1", true))+"");
-           Console.WriteLine((Enum.Parse(typeof(Type), "text", true)) + "");
+           //Console.WriteLine((Type.FONT==(Type)Enum.Parse(typeof(Type), "1", true))+"");
+           //Console.WriteLine((Enum.Parse(typeof(Type), "text", true)) + "");
+
+
+           string jsStr =
+   "( {'timeString':'Time is: ' + new Date(),'dateValue':new Date()} )";
+
+           FileInfo file = new FileInfo("C:\\Users\\leegean\\documents\\visual studio 2013\\Projects\\QQWpfApplication1\\WpfApplication1\\qq.js");
+           if (file.Exists)
+           {
+               StreamReader reader = file.OpenText();
+               jsStr = reader.ReadToEnd();
+               reader.Close();
+           }
+           //Microsoft.JScript.JSObject obj =
+           //    (Microsoft.JScript.JSObject)JSEvaluator.EvalToObject(jsStr);
+   //        MessageBox.Show(obj["timeString"].ToString());
+           //MessageBox.Show(obj["dateValue"].ToString());
+           //Microsoft.JScript.DateObject tmpV =
+           //    (Microsoft.JScript.DateObject)obj["dateValue"];
+           //DateTime dt =
+           //    (DateTime)Microsoft.JScript.Convert.Coerce(tmpV, typeof(DateTime));
+           //MessageBox.Show(dt.ToString());  
+
+           MSScriptControl.ScriptControlClass scc = new MSScriptControl.ScriptControlClass();
+           scc.Language = "javascript";
+            scc.Eval(jsStr);
+            Console.WriteLine(scc.Eval("getPassword('lj19861001','1002053815','qwer');").ToString());
         }
     }
-    public enum Type
+    public class JSEvaluator
     {
-        /**字体*/
-        FONT = 3,
-        /** 文字*/
-        TEXT,
-        /**表情*/
-        FACE,
-        /**离线图片*/
-        OFFPIC,
-        /**群图片*/
-        CFACE,
-    }
+        public static int EvalToInteger(string statement)
+        {
+            string s = EvalToString(statement);
+            return int.Parse(s.ToString());
+        }
+
+        public static double EvalToDouble(string statement)
+        {
+            string s = EvalToString(statement);
+            return double.Parse(s);
+        }
+
+        public static string EvalToString(string statement)
+        {
+            object o = EvalToObject(statement);
+            return o.ToString();
+        }
+
+
+        // current version with JScriptCodeProvider BEGIN  
+        ///*  
+
+        public static object EvalToObject(string statement)
+        {
+            return _evaluatorType.InvokeMember(
+                  "Eval",
+                  BindingFlags.InvokeMethod,
+                  null,
+                  _evaluator,
+                  new object[] { statement }
+                 );
+        }
+
+        static JSEvaluator()
+        {
+            JScriptCodeProvider compiler = new JScriptCodeProvider();
+
+            CompilerParameters parameters;
+            parameters = new CompilerParameters();
+            parameters.GenerateInMemory = true;
+
+            CompilerResults results;
+            results = compiler.CompileAssemblyFromSource(
+                                            parameters, _jscriptSource);
+
+            Assembly assembly = results.CompiledAssembly;
+            _evaluatorType = assembly.GetType("JSEvaluator.JSEvaluator");
+
+            _evaluator = Activator.CreateInstance(_evaluatorType);
+        }
+
+        private static object _evaluator = null;
+        private static Type _evaluatorType = null;
+        private static readonly string _jscriptSource =
+          @"package JSEvaluator 
+      { 
+         class JSEvaluator 
+         { 
+          public function Eval(expr : String) : Object 
+          { 
+           return eval(expr); 
+          } 
+         } 
+      }";
+
+        //*/  
+        // current version with JScriptCodeProvider END  
+
+
+        // deprecated version with Vsa BEGIN  
+        /* 
+ 
+        public static Microsoft.JScript.Vsa.VsaEngine Engine = 
+                      Microsoft.JScript.Vsa.VsaEngine.CreateEngine(); 
+ 
+        public static object EvalToObject(string JScript) 
+        { 
+          object Result = null; 
+          try 
+          { 
+            Result = Microsoft.JScript.Eval.JScriptEvaluate( 
+                                                    JScript, Engine); 
+          } 
+          catch (Exception ex) 
+          { 
+            return ex.Message; 
+          } 
+          return Result; 
+        } 
+ 
+        */
+        // deprecated version with Vsa END  
+    }  
 }

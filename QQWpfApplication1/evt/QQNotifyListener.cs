@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace QQWpfApplication1.evt
+namespace QQWpfApplication1.action
 {
-    interface QQNotifyListener
+  public   interface QQNotifyListener
     {
-        public void onNotifyEvent(QQNotifyEvent evt);
+        void onNotifyEvent(QQNotifyEvent evt);
     }
 }

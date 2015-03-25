@@ -1,52 +1,51 @@
-﻿using QQWpfApplication1.evt;
+﻿using QQWpfApplication1.action;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using QQWpfApplication1.evt.QQActionListener.OnActionEvent;
-namespace QQWpfApplication1.module
+namespace QQWpfApplication1.action
 {
-    class LoginModule:AbstractModule
+    public class LoginModule:AbstractModule
     {
 
-        public void checkVerify(String qqAccount, QQActionListener.OnActionEvent listener)
+        public AbstractActionFuture checkVerify(String qqAccount, QQActionListener.OnActionEvent listener)
         {
-             pushHttpAction(new CheckVerifyAction(getContext(), listener, qqAccount));
+             return  pushHttpAction(new CheckVerifyAction(getContext(), listener, qqAccount));
         }
 
-        public void webLogin(String username, String password, long uin, String verifyCode, QQActionListener.OnActionEvent listener)
+        public AbstractActionFuture webLogin(String username, String password, long uin, String verifyCode, QQActionListener.OnActionEvent listener)
         {
-             pushHttpAction(new WebLoginAction(getContext(), listener, username, password, uin, verifyCode));
+             return  pushHttpAction(new WebLoginAction(getContext(), listener, username, password, uin, verifyCode));
         }
 
-        public void channelLogin(QQStatus status, QQActionListener.OnActionEvent listener)
+        public AbstractActionFuture channelLogin(QQStatus status, QQActionListener.OnActionEvent listener)
         {
-             pushHttpAction(new ChannelLoginAction(getContext(), listener, status));
+             return  pushHttpAction(new ChannelLoginAction(getContext(), listener, status));
         }
-        public void getCaptcha(long uin, QQActionListener.OnActionEvent listener)
+        public AbstractActionFuture getCaptcha(long uin, QQActionListener.OnActionEvent listener)
         {
-             pushHttpAction(new GetCaptchaImageAction(getContext(), listener, uin));
+             return  pushHttpAction(new GetCaptchaImageAction(getContext(), listener, uin));
         }
-        public void pollMsg(QQActionListener.OnActionEvent listener)
+        public AbstractActionFuture pollMsg(QQActionListener.OnActionEvent listener)
         {
-             pushHttpAction(new PollMsgAction(getContext(), listener));
-        }
-
-        public void logout(QQActionListener.OnActionEvent listener)
-        {
-             pushHttpAction(new WebLogoutAction(getContext(), listener));
+             return  pushHttpAction(new PollMsgAction(getContext(), listener));
         }
 
-        public void getLoginSig(QQActionListener.OnActionEvent listener)
+        public AbstractActionFuture logout(QQActionListener.OnActionEvent listener)
         {
-             pushHttpAction(new GetLoginSigAction(getContext(), listener));
+             return  pushHttpAction(new WebLogoutAction(getContext(), listener));
         }
-        public void checkLoginSig(String checkUrl, QQActionListener.OnActionEvent listener)
+
+        public AbstractActionFuture getLoginSig(QQActionListener.OnActionEvent listener)
         {
-             pushHttpAction(new CheckLoginSigAction(getContext(), listener, checkUrl));
+             return  pushHttpAction(new GetLoginSigAction(getContext(), listener));
         }
-	
+        public AbstractActionFuture checkLoginSig(String checkUrl, QQActionListener.OnActionEvent listener)
+        {
+             return  pushHttpAction(new CheckLoginSigAction(getContext(), listener, checkUrl));
+        }
+
 
     }
 }

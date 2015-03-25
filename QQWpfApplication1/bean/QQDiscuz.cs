@@ -1,4 +1,4 @@
-﻿using QQWpfApplication1.evt;
+﻿using QQWpfApplication1.action;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +6,7 @@ using System.Text;
 
 namespace QQWpfApplication1.bean
 {
-    class QQDiscuz
+    public class QQDiscuz
     {
 	private long did;	//讨论组ID，每次登陆都固定，视为没有变换
 	private String name;	//讨论组的名字

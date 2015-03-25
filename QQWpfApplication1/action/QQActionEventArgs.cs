@@ -9,7 +9,7 @@ namespace QQWpfApplication1.action
     {
 
 
-        public static class ProgressArgs
+        public class ProgressArgs
         {
             /**当前进度*/
             public long current;

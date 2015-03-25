@@ -1,11 +1,13 @@
-﻿using QQWpfApplication1.evt;
+﻿using QQWpfApplication1.action;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Windows.Media.Imaging;
 
-namespace QQWpfApplication1.module
+namespace QQWpfApplication1.action
 {
     class GetCaptchaImageAction:AbstractHttpAction
     {
@@ -22,16 +24,21 @@ namespace QQWpfApplication1.module
 		this.uin = uin;
 	}
 	/** {@inheritDoc} */
-	protected void onHttpStatusOK(QQHttpResponse response){
+    public override void onHttpStatusOK(QQHttpResponse response)
+    {
 		try {
-			BinaryReader reader = new BinaryReader(response.getResponseData());
-			notifyActionEvent(QQActionEvent.Type.EVT_OK, reader);
+            BitmapImage bmp = new BitmapImage();
+            bmp.BeginInit();
+            bmp.StreamSource = new MemoryStream(response.getResponseData());
+            bmp.EndInit();
+            notifyActionEvent(QQActionEvent.Type.EVT_OK, bmp);
 		} catch (IOException e) {
-			notifyActionEvent(QQActionEvent.Type.EVT_ERROR, new QQException(QQWpfApplication1.evt.QQException.QQErrorCode.UNKNOWN_ERROR, e));
+			notifyActionEvent(QQActionEvent.Type.EVT_ERROR, new QQException(QQWpfApplication1.action.QQException.QQErrorCode.UNKNOWN_ERROR, e));
 		}
 	}
 	/** {@inheritDoc} */
-	protected QQHttpRequest onBuildRequest() {
+    public override QQHttpRequest onBuildRequest()
+    {
 		QQHttpRequest req = createHttpRequest("GET", QQConstants.URL_GET_CAPTCHA);
 		req.addGetValue("aid", QQConstants.APPID);
 		req.addGetValue("r", new Random().NextDouble() + "");

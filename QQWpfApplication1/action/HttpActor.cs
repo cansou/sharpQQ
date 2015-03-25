@@ -1,12 +1,12 @@
-﻿using System;
+﻿using QQWpfApplication1.action;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace QQWpfApplication1.evt
+namespace QQWpfApplication1.action
 {
-    class HttpActor
+    public class HttpActor
     {
 
         
@@ -23,10 +23,11 @@ namespace QQWpfApplication1.evt
 	public void execute() {
 		try {
 			switch (type) {
-			case Type.BUILD_REQUEST: 
-				ApacheHttpService service = context.getSerivce();
-				QQHttpRequest request = action.buildRequest();
-                service.executeHttpRequest(request, new HttpAdaptor(context, action));
+			case Type.BUILD_REQUEST: {
+				ApacheHttpService service =context.getSerivce();
+				QQHttpRequest request = action.onBuildRequest();
+				service.executeHttpRequest(request, new HttpAdaptor(context, action));
+				}
 				break;
 
 
@@ -37,7 +38,7 @@ namespace QQWpfApplication1.evt
             case Type.ON_HTTP_FINISH:
 				action.onHttpFinish(response);
 				break;
-
+				
 			}
 		} catch (QQException e) {
 			action.notifyActionEvent(QQActionEvent.Type.EVT_ERROR, e);
@@ -55,7 +56,7 @@ namespace QQWpfApplication1.evt
 		ON_HTTP_READ
 	}
 
-	
+    public HttpActor() { }
 	/**
 	 * <p>Constructor for HttpActor.</p>
 	 *
@@ -120,51 +121,30 @@ namespace QQWpfApplication1.evt
 	}
 
 
+	public class HttpAdaptor: QQHttpListener{
+		private QQContext context;
+		private AbstractHttpAction action;
+		
+		public HttpAdaptor(QQContext context, AbstractHttpAction action) {
+			this.context = context;
+			this.action = action;
+		}
+
+		
+		public void onHttpFinish(QQHttpResponse response) {
+			context.pushActor(new HttpActor(Type.ON_HTTP_FINISH, context, action, response));
+		}
+
+		
+		public void onHttpError(Exception t) {
+			context.pushActor(new HttpActor(Type.ON_HTTP_ERROR, context, action, t));
+			
+		}
+
+		
+	}
 
 
-    public class HttpAdaptor:QQHttpListener
-    {
-        private QQContext context;
-        private AbstractHttpAction action;
-
-        public HttpAdaptor(QQContext context, AbstractHttpAction action)
-        {
-            this.context = context;
-            this.action = action;
-        }
-
-
-        public void onHttpFinish(QQHttpResponse response)
-        {
-            context.pushActor(new HttpActor(Type.ON_HTTP_FINISH, context, action, response));
-        }
-
-
-        public void onHttpError(Exception t)
-        {
-            context.pushActor(new HttpActor(Type.ON_HTTP_ERROR, context, action, t));
-
-        }
-
-
-        public void onHttpHeader(QQHttpResponse response)
-        {
-            context.pushActor(new HttpActor(Type.ON_HTTP_HEADER, context, action, response));
-
-        }
-
-
-        public void onHttpWrite(long current, long total)
-        {
-            context.pushActor(new HttpActor(Type.ON_HTTP_WRITE, context, action, current, total));
-        }
-
-
-        public void onHttpRead(long current, long total)
-        {
-            context.pushActor(new HttpActor(Type.ON_HTTP_READ, context, action, current, total));
-        }
-    }
 	/** {@inheritDoc} */
 	
 	public String toString() {

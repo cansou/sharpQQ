@@ -94,6 +94,9 @@ namespace QQWpfApplication1.json
      *             If there is a syntax error in the source string or a
      *             duplicated key.
      */
+    public JSONObject(String x): this(new JSONTokener(new StringReader(x)))
+    {
+    }
     public JSONObject(JSONTokener x) :this(){
         char c;
         String key;

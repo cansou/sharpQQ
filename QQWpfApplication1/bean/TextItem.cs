@@ -46,18 +46,20 @@ namespace QQWpfApplication1.bean
 	 * @see iqq.im.bean.content.ContentItem#getType()
 	 */
 	/** {@inheritDoc} */
-	public Type getType() {
+    public override Type getType()
+    {
 		// TODO Auto-generated method stub
 		return Type.TEXT;
 	}
 
 	/** {@inheritDoc} */
-	public Object toJson(){
+    public override Object toJson()
+    {
 		return content;
 	}
 
 	/** {@inheritDoc} */
-	public void fromJson(String text) {
+	public override void fromJson(String text) {
 		content = text;
 	}
 

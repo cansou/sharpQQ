@@ -3,8 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.JScript;
-using Microsoft.JScript.Vsa;
+using System.CodeDom.Compiler;
+using System.Reflection;
+using System.IO;
+using System.Security.Cryptography;
+using System.Globalization;
+using System.Web;
 
 namespace QQWpfApplication1.action
 {
@@ -12,7 +16,7 @@ namespace QQWpfApplication1.action
     {
 
 
-        private static VsaEngine engine;
+        private static MSScriptControl.ScriptControlClass engine;
         /**
          * 登录邮箱时用到的，auth_token
          * 
@@ -23,63 +27,13 @@ namespace QQWpfApplication1.action
         public static long time33(String str)
         {
             long hash = 0;
-            for (int i = 0, length = str.Length; i < length; i++)
+            for (int i = 0, Length = str.Length; i < Length; i++)
             {
                 hash = hash * 33 + long.Parse(str.Substring(i,1));
             }
             return hash % 4294967296L;
         }
 
-        /**
-         * 获取好友列表时计算的Hash参数 v2014.06.14更新
-         * 
-         * @param uin
-         *            当前登录用户UIN
-         * @param ptwebqq
-         *            Cookie中的ptwebqq的值
-         * @return hash
-         */
-        public static String hash(String uin, String ptwebqq) {
-		String s = "";
-		try {
-			// String js =
-			// "P=function(i,a){var j=[];j[0]=i>>24&255;j[1]=i>>16&255;j[2]=i>>8&255;j[3]=i&255;for(var s=[],e=0;e<a.length;++e)s.push(a.charCodeAt(e));e=[];for(e.push(new b(0,s.length-1));e.length>0;){var c=e.pop();if(!(c.s>=c.e||c.s<0||c.e>=s.length))if(c.s+1==c.e){if(s[c.s]>s[c.e]){var J=s[c.s];s[c.s]=s[c.e];s[c.e]=J}}else{for(var J=c.s,l=c.e,f=s[c.s];c.s<c.e;){for(;c.s<c.e&&s[c.e]>=f;)c.e--,j[0]=j[0]+3&255;c.s<c.e&&(s[c.s]=s[c.e],c.s++,j[1]=j[1]*13+43&255);for(;c.s<c.e&&s[c.s]<=f;)c.s++,j[2]=j[2]-3&255;c.s<c.e&&(s[c.e]=s[c.s],c.e--,j[3]=(j[0]^j[1]^j[2]^j[3]+1)&255)}s[c.s]=f;e.push(new b(J,c.s-1));e.push(new b(c.s+1,l))}}s=[\"0\",\"1\",\"2\",\"3\",\"4\",\"5\",\"6\",\"7\",\"8\",\"9\",\"A\",\"B\",\"C\",\"D\",\"E\",\"F\"];e=\"\";for(c=0;c<j.length;c++)e+=s[j[c]>>4&15],e+=s[j[c]&15];return e},b=function(b,i){this.s=b||0;this.e=i||0}";
-			// 20140614修改
-			StringBuffer sqlSB = new StringBuffer();
-			sqlSB.setLength(0);
-			sqlSB.append("P = function(b, j) { \n");
-			sqlSB.append("\tfor (var a = j + \"password error\", i = \"\", E = [];;) \n");
-			sqlSB.append("\t\tif (i.length <= a.length) { \n");
-			sqlSB.append("\t\t\tif (i += b, i.length == a.length) \n");
-			sqlSB.append("\t\t\t\tbreak \n");
-			sqlSB.append("\t\t} else { \n");
-			sqlSB.append("\t\t\ti = i.slice(0, a.length); \n");
-			sqlSB.append("\t\t\tbreak \n");
-			sqlSB.append("\t\t} \n");
-			sqlSB.append("\tfor (var c = 0; c < i.length; c++) \n");
-			sqlSB.append("\t\tE[c] = i.charCodeAt(c) ^ a.charCodeAt(c); \n");
-			sqlSB.append("\ta = [\"0\", \"1\", \"2\", \"3\", \"4\", \"5\", \"6\", \"7\", \"8\", \"9\", \"A\", \"B\", \"C\", \"D\", \n");
-			sqlSB.append("\t\t  \"E\", \"F\"]; \n");
-			sqlSB.append("  i = \"\"; \n");
-			sqlSB.append("  for (c = 0; c < E.length; c++) \n");
-			sqlSB.append("    i += a[E[c] >> 4 & 15], i += a[E[c] & 15]; \n");
-			sqlSB.append("  return i \n");
-			sqlSB.append("} \n");
-			String js = sqlSB.toString();
-			// end
-			ScriptEngineManager mgr = new ScriptEngineManager();
-			ScriptEngine engine = mgr.getEngineByMimeType("application/javascript");
-			engine.eval(js);
-			Invocable inv = (Invocable) engine;
-			s = (String) inv.invokeFunction("P", uin, ptwebqq);
-
-			System.out.println("hash:    " + uin + "   " + ptwebqq + "   " + s);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return s;
-
-	}
 
         /**
          * 
@@ -95,58 +49,42 @@ namespace QQWpfApplication1.action
          */
         public static String encrypt(long uin, String plain, String verify)
         {
-            byte[] data = concat(md5(plain.getBytes()), long2bytes(uin));
+            byte[] data = concat(md5(Encoding.UTF8.GetBytes(plain)), long2bytes(uin));
             String code = byte2HexString(md5(data));
-            data = md5((code + verify.toUpperCase()).getBytes());
+            data = md5(Encoding.UTF8.GetBytes((code + verify.ToUpper())));
             return byte2HexString(data);
         }
 
         public static String encryptQm(long uin, String password, String verify)
         {
             String su = "";
-            ScriptEngine engine = initScriptEngine();
+            initScriptEngine();
             if (engine != null)
             {
-                try
-                {
                     // ";º ·"
-                    String salt = String.valueOf(new char[] { (char)0, (char)0, (char)0, (char)0, (char)59, (char)186, (char)32, (char)183 });
-                    String byte2HexString = byte2HexString(long2bytes(uin));
-                    su = (String)engine.eval("getPassword('" + password + "','" + byte2HexString.toLowerCase() + "','" + verify + "')");
-                }
-                catch (ScriptException e)
-                {
-
-                    e.printStackTrace();
-                }
+                    String byte2Hex= byte2HexString(long2bytes(uin));
+                    su = (String)engine.Eval("getPassword('" + password + "','" + byte2Hex.ToUpper() + "','" + verify + "')");
             }
             return su;
         }
         public static String getHash(String uin, String ptwebqq)
         {
             String su = "";
-            ScriptEngine engine = initScriptEngine();
+            initScriptEngine();
             if (engine != null)
             {
-                try
-                {
                     // ";º ·"
-                    su = (String)engine.eval("getHash('" + uin + "','" + ptwebqq + "')");
-                }
-                catch (ScriptException e)
-                {
-
-                    e.printStackTrace();
-                }
+                    su = (String)engine.Eval("getHash('" + uin + "','" + ptwebqq + "')");
             }
             return su;
 
         }
         private static byte[] concat(byte[] bytes1, byte[] bytes2)
         {
-            byte[] big = new byte[bytes1.length + bytes2.length];
-            System.arraycopy(bytes1, 0, big, 0, bytes1.length);
-            System.arraycopy(bytes2, 0, big, bytes1.length, bytes2.length);
+            byte[] big = new byte[bytes1.Length + bytes2.Length];
+
+            Array.Copy(bytes1, 0, big, 0, bytes1.Length);
+            Array.Copy(bytes2, 0, big, bytes1.Length, bytes2.Length);
             return big;
         }
 
@@ -156,17 +94,9 @@ namespace QQWpfApplication1.action
          */
         private static byte[] md5(byte[] bytes)
         {
-            MessageDigest dist = null;
+            MD5 md5 = new MD5CryptoServiceProvider();
             byte[] result = null;
-            try
-            {
-                dist = MessageDigest.getInstance("MD5");
-                result = dist.digest(bytes);
-            }
-            catch (NoSuchAlgorithmException e)
-            {
-                throw new IllegalArgumentException(e);
-            }
+                result = md5.ComputeHash(bytes);
             return result;
         }
 
@@ -175,24 +105,24 @@ namespace QQWpfApplication1.action
          * 
          */
         private static String byte2HexString(byte[] b) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		char[] hex = new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 		if (b == null)
 			return "null";
 
 		int offset = 0;
-		int len = b.length;
+		int len = b.Length;
 
 		// 检查索引范围
 		int end = offset + len;
-		if (end > b.length)
-			end = b.length;
+		if (end > b.Length)
+			end = b.Length;
 
-		sb.delete(0, sb.length());
+		sb.Remove(0, sb.Length);
 		for (int i = offset; i < end; i++) {
-			sb.append(hex[(b[i] & 0xF0) >>> 4]).append(hex[b[i] & 0xF]);
+			sb.Append(hex[(b[i] & 0xF0) >> 4]).Append(hex[b[i] & 0xF]);
 		}
-		return sb.toString();
+		return sb.ToString();
 	}
 
         /**
@@ -205,11 +135,11 @@ namespace QQWpfApplication1.action
         public static String gtk(String skey)
         {
             int hash = 5381;
-            for (int i = 0; i < skey.length(); i++)
+            for (int i = 0; i < skey.Length; i++)
             {
-                hash += (hash << 5) + skey.charAt(i);
+                hash += (hash << 5) + int.Parse(skey.Substring(i,1));
             }
-            return Integer.toString(hash & 0x7fffffff);
+            return (hash & 0x7fffffff)+"";
         }
 
         /**
@@ -240,80 +170,30 @@ namespace QQWpfApplication1.action
          * @return an array of byte.
          */
         public static byte[] hexString2Byte(String s) {
-		int len = s.length();
-		byte[] ret = new byte[len >>> 1];
+		int len = s.Length;
+		byte[] ret = new byte[len >> 1];
 		for (int i = 0; i <= len - 2; i += 2) {
-			ret[i >>> 1] = (byte) (Integer.parseInt(s.substring(i, i + 2).trim(), 16) & 0xFF);
+			ret[i >> 1] = (byte) (int.Parse(s.Substring(i, i + 2).Trim(), NumberStyles.AllowHexSpecifier) & 0xFF);
 		}
 		return ret;
 	}
 
-        public static String getWbSu(String username)
-        {
-            String su = "";
-            ScriptEngine engine = initScriptEngine();
-            if (engine != null)
-            {
-                try
-                {
-                    su = (String)engine.eval("sinaSSOEncoder.base64.encode('" + URLEncoder.encode(username, "utf-8") + "');");
-                }
-                catch (UnsupportedEncodingException e)
-                {
-
-                    e.printStackTrace();
-                }
-                catch (ScriptException e)
-                {
-
-                    e.printStackTrace();
-                }
-            }
-            return su;
-        }
-
-        public static String getWbSp(String password, String pubkey, long servertime, String nonce)
-        {
-            String su = "";
-            ScriptEngine engine = initScriptEngine();
-            if (engine != null)
-            {
-                try
-                {
-                    su = (String)engine.eval("sinaSSOEncoder.base64.makeRequest('" + password + "','" + pubkey + "'," + servertime + ",'" + nonce + "');");
-                }
-                catch (ScriptException e)
-                {
-
-                    e.printStackTrace();
-                }
-            }
-            return su;
-        }
-
-        private static VsaEngine initScriptEngine()
+        private static MSScriptControl.ScriptControlClass initScriptEngine()
         {
             if (engine != null) return engine;
-            engine = new VsaEngine();
-            try
-            {
-                engine.eval("var $ = new Object();var window = new Object();var navigator = new Object();navigator.appName == 'Microsoft Internet Explorer';navigator.userAgent = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36';"); /* 执行一段script */
-                engine.eval(new FileReader("js_wb/wb_01.js"));
-                engine.eval(new FileReader("js_wb/qq.js"));
+            engine = new MSScriptControl.ScriptControlClass();
+            engine.Language = "javascript";
+                string jsStr = "";
+
+                FileInfo file = new FileInfo("C:\\Users\\leegean\\documents\\visual studio 2013\\Projects\\QQWpfApplication1\\WpfApplication1\\qq.js");
+                if (file.Exists)
+                {
+                    StreamReader reader = file.OpenText();
+                    jsStr = reader.ReadToEnd();
+                    reader.Close();
+                }
+                engine.Eval(jsStr);
                 return engine;
-            }
-            catch (ScriptException e)
-            {
-
-                e.printStackTrace();
-            }
-            catch (FileNotFoundException e)
-            {
-
-                e.printStackTrace();
-            }
-            return null;
-
         }
 
         /**
@@ -324,60 +204,39 @@ namespace QQWpfApplication1.action
          */
         public static String convertUnicodeToChar(String source)
         {
-            if (null == source || " ".equals(source))
+            if (null == source || " ".Equals(source))
             {
                 return source;
             }
 
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             int i = 0;
-            while (i < source.length())
+            while (i < source.Length)
             {
-                if (source.charAt(i) == '\\')
+                if (source.ToCharArray()[i] == '\\')
                 {
-                    int j = Integer.parseInt(source.substring(i + 2, i + 6), 16);
-                    sb.append((char)j);
+                    int j = int.Parse(source.Substring(i + 2, i + 6), NumberStyles.AllowHexSpecifier);
+                    sb.Append((char)j);
                     i += 6;
                 }
                 else
                 {
-                    sb.append(source.charAt(i));
+                    sb.Append(source.ToCharArray()[i]);
                     i++;
                 }
             }
-            return sb.toString();
+            return sb.ToString();
         }
 
         public static String utf8_to_b64(String str)
         {
-            try
-            {
-                return Base64.getEncoder().encodeToString(URLEncoder.encode(str, "utf-8").getBytes("utf-8"));
-            }
-            catch (UnsupportedEncodingException e)
-            {
-
-                e.printStackTrace();
-            }
-            return "";
+                return Convert.ToBase64String(HttpUtility.UrlEncodeToBytes(str, Encoding.UTF8));
         }
 
         public static String _siteId(String str)
         {
             String su = "";
-            ScriptEngine engine = initScriptEngine();
-            if (engine != null)
-            {
-                try
-                {
-                    su = (String)engine.eval("_siteId('" + str + "')");
-                }
-                catch (ScriptException e)
-                {
-
-                    e.printStackTrace();
-                }
-            }
+                    su = (String)engine.Eval("_siteId('" + str + "')");
             return su;
         }
 
@@ -385,40 +244,112 @@ namespace QQWpfApplication1.action
         {
 
             String su = "";
-            ScriptEngine engine = initScriptEngine();
-            if (engine != null)
-            {
-                try
-                {
-                    su = (String)engine.eval("talkMsg('" + str + "')");
-                }
-                catch (ScriptException e)
-                {
-
-                    e.printStackTrace();
-                }
-            }
+                    su = (String)engine.Eval("talkMsg('" + str + "')");
             return su;
         }
         public static String getBkn(String skey)
         {
 
             String su = "";
-            ScriptEngine engine = initScriptEngine();
-            if (engine != null)
-            {
-                try
-                {
-                    su = (String)engine.eval("Encryption.getBkn('" + skey + "')");
-                }
-                catch (ScriptException e)
-                {
-
-                    e.printStackTrace();
-                }
-            }
+                    su = (String)engine.Eval("Encryption.getBkn('" + skey + "')");
             return su;
         }
 
     }
+
+//    public class JSEvaluator
+//    {
+//        public static int EvalToInteger(string statement)
+//        {
+//            string s = EvalToString(statement);
+//            return int.Parse(s.ToString());
+//        }
+
+//        public static double EvalToDouble(string statement)
+//        {
+//            string s = EvalToString(statement);
+//            return double.Parse(s);
+//        }
+
+//        public static string EvalToString(string statement)
+//        {
+//            object o = EvalToObject(statement);
+//            return o.ToString();
+//        }
+
+
+//        // current version with JScriptCodeProvider BEGIN  
+//        ///*  
+
+//        public static object EvalToObject(string statement)
+//        {
+//            return _EvaluatorType.InvokeMember(
+//                  "Eval",
+//                  BindingFlags.InvokeMethod,
+//                  null,
+//                  _Evaluator,
+//                  new object[] { statement }
+//                 );
+//        }
+
+//        static JSEvaluator()
+//        {
+//            JScriptCodeProvider compiler = new JScriptCodeProvider();
+
+//            CompilerParameters parameters;
+//            parameters = new CompilerParameters();
+//            parameters.GenerateInMemory = true;
+
+//            CompilerResults results;
+//            results = compiler.CompileAssemblyFromSource(
+//                                            parameters, _jscriptSource);
+
+//            Assembly assembly = results.CompiledAssembly;
+//            _EvaluatorType = assembly.GetType("JSEvaluator.JSEvaluator");
+
+//            _Evaluator = Activator.CreateInstance(_EvaluatorType);
+//        }
+
+//        private static object _Evaluator = null;
+//        private static Type _EvaluatorType = null;
+//        private static readonly string _jscriptSource =
+//          @"package JSEvaluator 
+//      { 
+//         class JSEvaluator 
+//         { 
+//          public function Eval(expr : String) : Object 
+//          { 
+//           return Eval(expr); 
+//          } 
+//         } 
+//      }";
+
+        //*/  
+        // current version with JScriptCodeProvider END  
+
+
+        // deprecated version with Vsa BEGIN  
+        /* 
+ 
+        public static Microsoft.JScript.Vsa.VsaEngine Engine = 
+                      Microsoft.JScript.Vsa.VsaEngine.CreateEngine(); 
+ 
+        public static object EvalToObject(string JScript) 
+        { 
+          object Result = null; 
+          try 
+          { 
+            Result = Microsoft.JScript.Eval.JScriptEvaluate( 
+                                                    JScript, Engine); 
+          } 
+          catch (Exception ex) 
+          { 
+            return ex.Message; 
+          } 
+          return Result; 
+        } 
+ 
+        */
+        // deprecated version with Vsa END  
+    //}  
 }
