@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using QQWpfApplication1.evt.QQActionListener.OnActionEvent;
 namespace QQWpfApplication1.module
 {
     class LoginModule:AbstractModule

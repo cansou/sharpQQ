@@ -1,0 +1,107 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local ="clr-namespace:WpfApplication2"
+    xmlns:base="clr-namespace:System;assembly=mscorlib"
+        xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero" x:Class="WpfApplication2.Window1"
+        Title="Window1" Height="406" Width="494" x:Name="window">
+    <Window.Resources>
+        <local:Person x:Key="p1" Id="123" Name="leegean" />
+        <base:Double x:Key="height1">50</base:Double>
+        <Style x:Key="ButtonFocusVisual">
+            <Setter Property="Control.Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Rectangle Margin="2" SnapsToDevicePixels="true" Stroke="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" StrokeThickness="1" StrokeDashArray="1 2"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <LinearGradientBrush x:Key="ButtonNormalBackground" EndPoint="0,1" StartPoint="0,0">
+            <GradientStop Color="#F3F3F3" Offset="0"/>
+            <GradientStop Color="#EBEBEB" Offset="0.5"/>
+            <GradientStop Color="#DDDDDD" Offset="0.5"/>
+            <GradientStop Color="#CDCDCD" Offset="1"/>
+        </LinearGradientBrush>
+        <SolidColorBrush x:Key="ButtonNormalBorder" Color="#FF707070"/>
+        <Style x:Key="ButtonStyle1" TargetType="{x:Type Button}" >
+            <Setter Property="FocusVisualStyle" Value="{StaticResource ButtonFocusVisual}" />
+            <Setter Property="Background" Value="{StaticResource ButtonNormalBackground}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource ButtonNormalBorder}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="1"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Themes:ButtonChrome  x:Name="Chrome" BorderBrush="{TemplateBinding BorderBrush}" Background="{TemplateBinding Background}" RenderMouseOver="{TemplateBinding IsMouseOver}" RenderPressed="{TemplateBinding IsPressed}" RenderDefaulted="{TemplateBinding IsDefaulted}" SnapsToDevicePixels="true">
+                            <StackPanel Width="{TemplateBinding Height}" >
+
+                                <Label Content="{Binding RelativeSource={RelativeSource Mode=TemplatedParent},Path=Content}"></Label>
+                                <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+
+                            </StackPanel>
+
+                        </Themes:ButtonChrome>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsKeyboardFocused" Value="true">
+                                <Setter Property="RenderDefaulted" TargetName="Chrome" Value="true"/>
+                            </Trigger>
+                            <Trigger Property="ToggleButton.IsChecked" Value="true">
+                                <Setter Property="RenderPressed" TargetName="Chrome" Value="true"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Foreground" Value="#ADADAD"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+    <StackPanel x:Name="stackpanel" DataContext="20">
+        <Button Height="{StaticResource height1}" Content="{Binding Name, RelativeSource={RelativeSource FindAncestor, AncestorLevel=1, AncestorType={x:Type StackPanel}}}" x:Name="oooo" Style="{DynamicResource ButtonStyle1}"/>
+        <Button Content="{Binding  RelativeSource={RelativeSource Self}, Path=Width}" Height="{Binding }">
+        </Button>
+        <Viewbox >
+            <Canvas Height="300" Width="400">
+                <Rectangle Fill="#FF46DC24" Width="200" Height="60" RadiusX="12" RadiusY="12" RenderTransformOrigin="0.5,0.5" Stretch="Fill" Canvas.Top="-5" StrokeDashArray="1 1" StrokeThickness="4">
+                    <Rectangle.OpacityMask>
+                        <LinearGradientBrush>
+                            <GradientStop Color="#00000000" Offset="1"/>
+                            <GradientStop Color="White"/>
+                        </LinearGradientBrush>
+                    </Rectangle.OpacityMask>
+                    <Rectangle.Effect>
+                        <DropShadowEffect Color="#FF595615" ShadowDepth="12"/>
+                    </Rectangle.Effect>
+                    <Rectangle.Stroke>
+                        <LinearGradientBrush EndPoint="0.25,1" StartPoint="0.25,0">
+                            <GradientStop Color="Black"/>
+                            <GradientStop Color="#FFAC0725" Offset="0.574"/>
+                        </LinearGradientBrush>
+                    </Rectangle.Stroke>
+                </Rectangle>
+                <Line Fill="#FF199E37" StrokeThickness="24" Stroke="#FFD83333" Canvas.Left="235" Canvas.Top="10" X2="100" StrokeDashArray="1" StrokeDashCap="Round" StrokeLineJoin="Round"/>
+
+                <Path Width="200" Height="200" Margin="0,50,0,0" Stroke="#FFC30A0A" StrokeThickness="10">
+                    <Path.Data>
+                        <GeometryGroup>
+                            <RectangleGeometry RadiusX="2" RadiusY="2" Rect="10,10,150,50"/>
+                            <EllipseGeometry Center="100,100" RadiusX="40" RadiusY="30" Changed="changed">
+                            </EllipseGeometry>
+                            <PathGeometry>
+                                <PathFigure StartPoint="20,0">
+                                    <LineSegment Point="50,50"/>
+                                    <ArcSegment Point="70,0" RotationAngle="60" Size="40,30"/>
+                                </PathFigure>
+                            </PathGeometry>
+                        </GeometryGroup>
+                    </Path.Data>
+                </Path>
+            </Canvas>
+        </Viewbox>
+    </StackPanel>
+</Window>

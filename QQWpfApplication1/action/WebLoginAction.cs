@@ -6,7 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
-using QQWpfApplication1.evt.QQException.QQErrorCode;
+using QQWpfApplication1.evt;
 
 namespace QQWpfApplication1.module
 {

@@ -5,8 +5,6 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using QQWpfApplication1.evt.QQException.QQErrorCode;
-using QQWpfApplication1.evt.QQActionListener;
 namespace QQWpfApplication1.evt
 {
     public abstract class AbstractHttpAction:QQHttpListener

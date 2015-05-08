@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace QQWpfApplication1.evt
 {
-    interface QQContext
+    public interface QQContext
     {
         
 	/**
