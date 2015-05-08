@@ -1,4 +1,4 @@
-﻿using QQWpfApplication1.evt;
+﻿using QQWpfApplication1.action;
 using QQWpfApplication1.json;
 using System;
 using System.Collections.Generic;
@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace QQWpfApplication1.bean
 {
-    class QQMsg
+    public class QQMsg
     {
         
 	public enum Type {
@@ -77,11 +77,11 @@ namespace QQWpfApplication1.bean
 				}else if( value is String){
 					addContentItem(new TextItem((String) value));
 				}else{
-					throw new QQException(QQWpfApplication1.evt.QQException.QQErrorCode.UNKNOWN_ERROR, "unknown msg content type:" + value.ToString());
+					throw new QQException(QQWpfApplication1.action.QQException.QQErrorCode.UNKNOWN_ERROR, "unknown msg content type:" + value.ToString());
 				}
 			}
 		} catch (JSONException e) {
-			throw new QQException(QQWpfApplication1.evt.QQException.QQErrorCode.JSON_ERROR, e);
+			throw new QQException(QQWpfApplication1.action.QQException.QQErrorCode.JSON_ERROR, e);
 		}
 	}
 

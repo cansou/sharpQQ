@@ -1,14 +1,13 @@
-﻿using QQWpfApplication1.evt;
+﻿using QQWpfApplication1.action;
 using QQWpfApplication1.json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using QQWpfApplication1.action;
 using QQWpfApplication1.bean;
 
-namespace QQWpfApplication1.module
+namespace QQWpfApplication1.action
 {
    public class PollMsgAction:AbstractHttpAction
     {
@@ -17,7 +16,8 @@ namespace QQWpfApplication1.module
 	}
 
 	/** {@inheritDoc} */
-	protected QQHttpRequest onBuildRequest() {
+    public override QQHttpRequest onBuildRequest()
+    {
 		QQSession session = getContext().getSession();
 		JSONObject json = new JSONObject();
 		json.put("clientid", session.getClientId());
@@ -29,17 +29,18 @@ namespace QQWpfApplication1.module
 		req.addPostValue("r", json.ToString());
 		req.addPostValue("clientid", session.getClientId() + "");
 		req.addPostValue("psessionid", session.getSessionId());
-		req.setReadTimeout(70 * 1000);
-		req.setConnectTimeout(10 * 1000);
+        //req.setReadTimeout(70 * 1000);
+        //req.setConnectTimeout(10 * 1000);
 		req.addHeader("Referer", QQConstants.REFFER);
 
 		return req;
 	}
 
 	/** {@inheritDoc} */
-	public void onHttpFinish(QQHttpResponse response) {
+    public override void onHttpFinish(QQHttpResponse response)
+    {
 		// 如果返回的内容为空，认为这次pollMsg仍然成功
-		if (response.getContentLength() == 0) {
+		if (response.getResponseMessage().Length == 0) {
 			notifyActionEvent(QQActionEvent.Type.EVT_OK, new List<QQNotifyEvent>());
 		} else {
 			base.onHttpFinish(response);
@@ -47,7 +48,8 @@ namespace QQWpfApplication1.module
 	}
 
 	/** {@inheritDoc} */
-	protected void onHttpStatusOK(QQHttpResponse response)  {
+    public override void onHttpStatusOK(QQHttpResponse response)
+    {
 		QQStore store = getContext().getStore();
 		List<QQNotifyEvent> notifyEvents = new List<QQNotifyEvent>();
 		JSONObject json = new JSONObject(new JSONTokener(new StringReader(response.getResponseString())));

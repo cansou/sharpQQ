@@ -1,4 +1,4 @@
-﻿using QQWpfApplication1.evt;
+﻿using QQWpfApplication1.action;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace QQWpfApplication1.bean
 {
-    class QQAccount:QQUser
+    public class QQAccount:QQUser
     {
         
 	

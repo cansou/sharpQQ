@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace QQWpfApplication1.evt
+namespace QQWpfApplication1.action
 {
-    class QQNotifyEvent
+   public class QQNotifyEvent
     {
         
 	private Type type;

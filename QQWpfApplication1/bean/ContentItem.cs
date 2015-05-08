@@ -5,23 +5,23 @@ using System.Text;
 
 namespace QQWpfApplication1.bean
 {
-    class ContentItem
+    public abstract class ContentItem
     {
-	public Type getType();
+        public abstract Type getType();
 	/**
 	 * <p>toJson.</p>
 	 *
 	 * @throws iqq.im.QQException if any.
 	 * @return a {@link java.lang.Object} object.
 	 */
-	public Object toJson() ;
+        public abstract Object toJson();
 	/**
 	 * <p>fromJson.</p>
 	 *
 	 * @param text a {@link java.lang.String} object.
 	 * @throws iqq.im.QQException if any.
 	 */
-	public void fromJson(String text) ;
+        public abstract void fromJson(String text);
 
 	public enum Type {
 		/**字体*/

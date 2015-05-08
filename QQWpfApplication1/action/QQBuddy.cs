@@ -1,4 +1,4 @@
-﻿using QQWpfApplication1.evt;
+﻿using QQWpfApplication1.action;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +6,7 @@ using System.Text;
 
 namespace QQWpfApplication1.action
 {
-    class QQBuddy:QQUser
+    public class QQBuddy:QQUser
     {
         
 	

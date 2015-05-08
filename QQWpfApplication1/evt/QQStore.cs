@@ -5,9 +5,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace QQWpfApplication1.evt
+namespace QQWpfApplication1.action
 {
-    class QQStore
+    public class QQStore
     {
 	private Dictionary<long, QQBuddy> buddyDictionary; // uin => QQBudy, 快速通过uin查找QQ好友
 	private Dictionary<long, QQStranger> strangerDictionary; // uin => QQStranger, 快速通过uin查找临时会话用户

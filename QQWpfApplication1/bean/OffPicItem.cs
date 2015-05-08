@@ -1,4 +1,4 @@
-﻿using QQWpfApplication1.evt;
+﻿using QQWpfApplication1.action;
 using QQWpfApplication1.json;
 using System;
 using System.Collections.Generic;
@@ -103,12 +103,14 @@ namespace QQWpfApplication1.bean
 	public void setFileSize(int fileSize) {
 		this.fileSize = fileSize;
 	}
-	public Type getType() {
+    public override Type getType()
+    {
 		return Type.OFFPIC;
 	}
 
 	/** {@inheritDoc} */
-	public Object toJson()  {
+    public override Object toJson()
+    {
 		//[\"offpic\",\"/27d736df-2a59-4007-8701-7218bc70898d\",\"Beaver.bmp\",14173]
 		JSONArray json = new JSONArray();
 		json.put("offpic");
@@ -119,7 +121,8 @@ namespace QQWpfApplication1.bean
 	}
 
 	/** {@inheritDoc} */
-	public void fromJson(String text)  {
+    public override void fromJson(String text)
+    {
 		//["offpic",{"success":1,"file_path":"/7acccf74-0fcd-4bbd-b885-03a5cc2f7507"}]
 		try {
 			JSONArray json = new JSONArray(new JSONTokener(new StringReader(text)));
@@ -127,7 +130,7 @@ namespace QQWpfApplication1.bean
 			success = pic.getInt("success") == 1 ? true : false;
 			filePath = pic.getString("file_path");
 		} catch (JSONException e) {
-			throw new QQException(QQWpfApplication1.evt.QQException.QQErrorCode.JSON_ERROR, e);
+			throw new QQException(QQWpfApplication1.action.QQException.QQErrorCode.JSON_ERROR, e);
 		}
 		
 	}

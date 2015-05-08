@@ -1,10 +1,11 @@
-﻿using QQWpfApplication1.evt;
+﻿using QQWpfApplication1.action;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media.Imaging;
 
 namespace QQWpfApplication1.bean
 {
@@ -23,7 +24,7 @@ namespace QQWpfApplication1.bean
             /**验证的类型，登陆，添加好友，获取qq号可能会出现验证码*/
             public VerifyType type;
             /**验证码图片对象**/
-            public Bitmap image;
+            public BitmapImage image;
             /**需要验证的原因*/
             public String reason;
             /**future对象，在验证流程内部使用*/
@@ -38,13 +39,6 @@ namespace QQWpfApplication1.bean
          * 登录进度通知
          * @author solosky
          */
-        public enum LoginProgress
-        {
-            CHECK_VERIFY,
-            UI_LOGIN,
-            UI_LOGIN_VERIFY,
-            CHANNEL_LOGIN,
-        }
 
     }
 }

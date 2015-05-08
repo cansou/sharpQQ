@@ -1,12 +1,13 @@
-﻿using QQWpfApplication1.evt;
+﻿using QQWpfApplication1.action;
+using QQWpfApplication1.action;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace QQWpfApplication1.module
+namespace QQWpfApplication1.action
 {
-    abstract class  AbstractModule
+    public  class  AbstractModule
     {
         
 	private QQContext cxt;
@@ -15,7 +16,7 @@ namespace QQWpfApplication1.module
 		this.cxt = context;
 	}
 
-    public abstract void destroy();
+    public  void destroy() { }
 	
 	
 	/**
@@ -33,8 +34,10 @@ namespace QQWpfApplication1.module
 	 * @param action a {@link iqq.im.action.HttpAction} object.
 	 * @return a {@link iqq.im.event.QQActionFuture} object.
 	 */
-	protected void pushHttpAction(AbstractHttpAction action){
+    protected AbstractActionFuture pushHttpAction(AbstractHttpAction action)
+    {
 		getContext().pushActor(new HttpActor(HttpActor.Type.BUILD_REQUEST, getContext(), action));
+        return action.Future;
 	}
 	
 

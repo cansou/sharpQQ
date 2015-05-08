@@ -4,10 +4,11 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media.Imaging;
 
 namespace QQWpfApplication1.bean
 {
-    class QQGroup
+    public class QQGroup
     {
         
 	private long gid;	//真实的群号
@@ -21,7 +22,7 @@ namespace QQWpfApplication1.bean
 	private String memo;
 	private String fingermemo;
 	private DateTime createTime;
-	private  Bitmap face; // 头像
+	private  BitmapImage face; // 头像
 
 	private List<QQGroupMember> members = new List<QQGroupMember>();
 
@@ -164,7 +165,7 @@ namespace QQWpfApplication1.bean
 	 *
 	 * @return the face
 	 */
-	public Bitmap getFace() {
+	public BitmapImage getFace() {
 		return face;
 	}
 
@@ -174,7 +175,7 @@ namespace QQWpfApplication1.bean
 	 * @param face
 	 *            the face to set
 	 */
-	public void setFace(Bitmap face) {
+	public void setFace(BitmapImage face) {
 		this.face = face;
 	}
 

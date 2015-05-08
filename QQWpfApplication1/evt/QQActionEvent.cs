@@ -3,15 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using QQWpfApplication1.evt;
+using QQWpfApplication1.action;
 
-namespace QQWpfApplication1.evt
+namespace QQWpfApplication1.action
 {
     public class QQActionEvent
     {
 	private Type type;
 	private Object target;
-	private AbstractActionFuture future;
     private AbstractActionFuture abstractActionFuture;
 	
 	/**
@@ -57,9 +56,6 @@ namespace QQWpfApplication1.evt
 	public enum Type{
 		EVT_OK,
 		EVT_ERROR,
-		EVT_WRITE,
-		EVT_READ,
-		EVT_CANCELED,
 		EVT_RETRY,
 	}
 

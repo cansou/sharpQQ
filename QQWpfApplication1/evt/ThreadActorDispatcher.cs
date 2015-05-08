@@ -1,13 +1,14 @@
-﻿using System;
+﻿using QQWpfApplication1.action;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace QQWpfApplication1.evt
+namespace QQWpfApplication1.action
 {
-    class ThreadActorDispatcher
+    public class ThreadActorDispatcher
     {
 
         
@@ -78,15 +79,14 @@ namespace QQWpfApplication1.evt
 	 * @author solosky
 	 *
 	 */
-	public class ExitActor : HttpActor {
-		
-		public void execute() {
-			//do nothing
-					service.destroy();
-		}
-	}
-	
-	
+    }
+    public class ExitActor : HttpActor
+    {
 
+        public void execute()
+        {
+            //do nothing
+            //service.destroy();
+        }
     }
 }

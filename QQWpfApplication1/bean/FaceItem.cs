@@ -1,4 +1,4 @@
-﻿using QQWpfApplication1.evt;
+﻿using QQWpfApplication1.action;
 using QQWpfApplication1.json;
 using System;
 using System.Collections.Generic;
@@ -63,13 +63,15 @@ namespace QQWpfApplication1.bean
 	 * @see iqq.im.bean.content.ContentItem#getType()
 	 */
 	/** {@inheritDoc} */
-	public Type getType() {
+    public override Type getType()
+    {
 		// TODO Auto-generated method stub
 		return Type.FACE;
 	}
 
 	/** {@inheritDoc} */
-	public Object toJson()  {
+    public override Object toJson()
+    {
 		JSONArray json = new JSONArray();
 		json.put("face");
 		json.put(id);
@@ -77,12 +79,13 @@ namespace QQWpfApplication1.bean
 	}
 
 	/** {@inheritDoc} */
-	public void fromJson(String text) {
+    public override void fromJson(String text)
+    {
 		try {
 			JSONArray json = new JSONArray(new JSONTokener(new StringReader(text)));
 			id = json.getInt(1);
 		} catch (JSONException e) {
-			throw new QQException(QQWpfApplication1.evt.QQException.QQErrorCode.JSON_ERROR, e);
+			throw new QQException(QQWpfApplication1.action.QQException.QQErrorCode.JSON_ERROR, e);
 		}
 	}
 

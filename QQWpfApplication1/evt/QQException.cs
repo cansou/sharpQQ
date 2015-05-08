@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace QQWpfApplication1.evt
+namespace QQWpfApplication1.action
 {
     public class QQException:ApplicationException
     {

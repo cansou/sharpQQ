@@ -1,14 +1,19 @@
 ﻿using QQWpfApplication1.action;
+
 using QQWpfApplication1.evt;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
-using QQWpfApplication1.evt;
 
-namespace QQWpfApplication1.module
+
+
+
+
+namespace QQWpfApplication1.action
 {
     class WebLoginAction:AbstractHttpAction
     {
@@ -38,7 +43,10 @@ namespace QQWpfApplication1.module
 	}
 
 	/** {@inheritDoc} */
-	public QQHttpRequest buildRequest()  {
+
+    public override QQHttpRequest onBuildRequest()
+    {
+
 	
 	//尝试登录，准备传递的参数值
 	QQHttpRequest req = createHttpRequest("GET", QQConstants.URL_UI_LOGIN);
@@ -85,20 +93,24 @@ namespace QQWpfApplication1.module
 }
 
 	/** {@inheritDoc} */
-	protected void onHttpStatusOK(QQHttpResponse response) {
+
+    public override void onHttpStatusOK(QQHttpResponse response)
+    {
+
         Regex pt = new Regex(QQConstants.REGXP_LOGIN);
         Match mc = pt.Match(response.getResponseString());
 	     if(mc.Success){
 	    	int ret = int.Parse(mc.Groups[1].Value);
 	    	switch(ret){
 		    	case 0: notifyActionEvent(QQActionEvent.Type.EVT_OK, mc.Groups[3].Value); break;	
+
 		    	case 3: throw new QQException(QQWpfApplication1.evt.QQException.QQErrorCode.WRONG_PASSWORD, mc.group(5));
 		    	case 4: throw new QQException(QQWpfApplication1.evt.QQException.QQErrorCode.WRONG_CAPTCHA, mc.group(5));
                 case 7: throw new QQException(QQWpfApplication1.evt.QQException.QQErrorCode.IO_ERROR, mc.Groups[5].Value);
                 default: throw new QQException(QQWpfApplication1.evt.QQException.QQErrorCode.INVALID_USER, mc.Groups[5].Value);
 	    	}
 	     }else{
-	    	 throw new QQException(QQWpfApplication1.evt.QQException.QQErrorCode.UNEXPECTED_RESPONSE);
+	    	 throw new QQException(QQWpfApplication1.evt.QQException.QQErrorCode.UNEXPECTED_RESPONSE)
 	     }		
 	}
 

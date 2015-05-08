@@ -5,7 +5,7 @@ using System.Text;
 
 namespace QQWpfApplication1.bean
 {
-    class QQDiscuzMember:QQStranger
+    public class QQDiscuzMember:QQStranger
     {
         
 	

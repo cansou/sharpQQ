@@ -1,12 +1,13 @@
-﻿using System;
+﻿using QQWpfApplication1.action;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace QQWpfApplication1.evt
+namespace QQWpfApplication1.action
 {
-    interface QQHttpListener
+    public  interface QQHttpListener
     {
 
         /**
@@ -14,13 +15,13 @@ namespace QQWpfApplication1.evt
          *
          * @param response a {@link iqq.im.http.QQHttpResponse} object.
          */
-        public void onHttpFinish(QQHttpResponse response);
+         void onHttpFinish(QQHttpResponse response);
         /**
          * <p>onHttpError.</p>
          *
          * @param t a {@link java.lang.Throwable} object.
          */
-        public void onHttpError(Exception t);
+         void onHttpError(Exception t);
         /**
          * <p>onHttpHeader.</p>
          *

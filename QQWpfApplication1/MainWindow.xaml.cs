@@ -19,6 +19,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using QQWpfApplication1.json;
+using QQWpfApplication1.action;
 
 namespace QQWpfApplication1
 {
@@ -30,9 +31,11 @@ namespace QQWpfApplication1
          private static System.Net.Http.Headers.HttpResponseHeaders headers;
         private static IEnumerator<KeyValuePair<string, IEnumerable<string>>> pair;
         private static IEnumerator<KeyValuePair<string, IEnumerable<string>>> enumerator;
+        private WebQQClientTest test;
         public MainWindow()
         {
             InitializeComponent();
+             test = new WebQQClientTest("1002053815", "lj19861001", "569398403@qq.com", "leegean19861001");
         }
              public  void get(String url)
         {
@@ -133,49 +136,52 @@ namespace QQWpfApplication1
 
         private void onclick(object sender, RoutedEventArgs e)
         {
-            get("http://apistore.baidu.com/microserviced/iplookups?ip=117.89.35.58");
-            //get("http://www.baidu.com");
-            Dictionary<String, String> data= new Dictionary<String, String> {
-            {"reqMethod","GET"},
-            {"reqUrl","http://apistore.baidu.com/microservice/iplookup"},
-            {"reqUrlParams[0][key]","ip"},
-            {"reqUrlParams[0][value]","117.89.35.58"},
-            {"token","e82c0f5f0ef3383b271a957dc4f4b781}"}
-            };
-            //post(data);
-            String str = "{\"retcode\":0,\"result\":{\"gmasklist\":[{\"gid\":1000,\"mask\":0},{\"gid\":1638195794,\"mask\":0},{\"gid\":321105219,\"mask\":0}], \"gnamelist\":[{\"flag\":16777217,\"name\":\"iQQ\",\"gid\":1638195794,\"code\":2357062609},{\"flag\":1048577,\"name\":\"iQQ核心开发区\",\"gid\":321105219,\"code\":640215156}],\"gmarklist\":[]}}";
 
-            JSONTokener token = new JSONTokener(new StringReader(str));
-            JSONObject json = new JSONObject(token);
-            //Console.WriteLine(jsonO.optJSONObject("result").optJSONArray("gmasklist"));
+          
+            test.login();
+            //get("http://apistore.baidu.com/microserviced/iplookups?ip=117.89.35.58");
+            ////get("http://www.baidu.com");
+            //Dictionary<String, String> data= new Dictionary<String, String> {
+            //{"reqMethod","GET"},
+            //{"reqUrl","http://apistore.baidu.com/microservice/iplookup"},
+            //{"reqUrlParams[0][key]","ip"},
+            //{"reqUrlParams[0][value]","117.89.35.58"},
+            //{"token","e82c0f5f0ef3383b271a957dc4f4b781}"}
+            //};
+            ////post(data);
+            //String str = "{\"retcode\":0,\"result\":{\"gmasklist\":[{\"gid\":1000,\"mask\":0},{\"gid\":1638195794,\"mask\":0},{\"gid\":321105219,\"mask\":0}], \"gnamelist\":[{\"flag\":16777217,\"name\":\"iQQ\",\"gid\":1638195794,\"code\":2357062609},{\"flag\":1048577,\"name\":\"iQQ核心开发区\",\"gid\":321105219,\"code\":640215156}],\"gmarklist\":[]}}";
 
-            int retcode = json.getInt("retcode");
-            if (retcode == 0)
-            {
-                // 处理好友列表
-                JSONObject results = json.getJSONObject("result");
-                JSONArray groupJsonList = results.getJSONArray("gnamelist");	// 群列表
-                JSONArray groupMaskJsonList = results.getJSONArray("gmasklist");	//禁止接收群消息标志：正常 0， 接收不提醒 1， 完全屏蔽 2
+            //JSONTokener token = new JSONTokener(new StringReader(str));
+            //JSONObject json = new JSONObject(token);
+            ////Console.WriteLine(jsonO.optJSONObject("result").optJSONArray("gmasklist"));
 
-                for (int i = 0; i < groupJsonList.length(); i++)
-                {
-                    JSONObject groupJson = groupJsonList.getJSONObject(i);
-                    groupJson.getLong("gid");
-                    groupJson.getLong("code");
-                    groupJson.getInt("flag");
-                    groupJson.getString("name");
-                }
+            //int retcode = json.getInt("retcode");
+            //if (retcode == 0)
+            //{
+            //    // 处理好友列表
+            //    JSONObject results = json.getJSONObject("result");
+            //    JSONArray groupJsonList = results.getJSONArray("gnamelist");	// 群列表
+            //    JSONArray groupMaskJsonList = results.getJSONArray("gmasklist");	//禁止接收群消息标志：正常 0， 接收不提醒 1， 完全屏蔽 2
 
-                for (int i = 0; i < groupMaskJsonList.length(); i++)
-                {
-                    JSONObject maskObj = groupMaskJsonList.getJSONObject(i);
-                    long gid = maskObj.getLong("gid");
-                    int mask = maskObj.getInt("mask");
-                    Console.WriteLine(gid+"    "+mask);
-                }
-                //post();
+            //    for (int i = 0; i < groupJsonList.length(); i++)
+            //    {
+            //        JSONObject groupJson = groupJsonList.getJSONObject(i);
+            //        groupJson.getLong("gid");
+            //        groupJson.getLong("code");
+            //        groupJson.getInt("flag");
+            //        groupJson.getString("name");
+            //    }
 
-            }
+            //    for (int i = 0; i < groupMaskJsonList.length(); i++)
+            //    {
+            //        JSONObject maskObj = groupMaskJsonList.getJSONObject(i);
+            //        long gid = maskObj.getLong("gid");
+            //        int mask = maskObj.getInt("mask");
+            //        Console.WriteLine(gid+"    "+mask);
+            //    }
+            //    //post();
+
+            //}
         }
     }
 
